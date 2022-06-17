@@ -5,6 +5,17 @@ player_consistency_wrangle <- function(df1, df2,
 
     year2 <- lubridate::ymd(year1) + years(20)
 
+    proportion_cal <- function(df){
+
+        total <- df %>% count(rank) %>% .$n %>% sum()
+        amount <- df %>% count(rank) %>% .[.[,"rank"]<=10,] %>% .$n %>% sum()
+        proportion <- amount/total
+        # proportion <- rep(amount/total, times=total)
+
+        return(proportion)
+
+    }
+
     df1 <- df1 %>%
         mutate(ranking_date = lubridate::ymd(ranking_date)) %>%
         filter(ranking_date %within% interval(year1, year2)) %>%
@@ -13,13 +24,12 @@ player_consistency_wrangle <- function(df1, df2,
         left_join(., df2[, c("player_id", "name_first", "name_last")],
                   by = c("player" = "player_id"), keep = F) %>%
         filter(max(rank) <=5) %>%
+        filter(proportion_cal(.) >= 0.5) %>%
         summarise(player = glue::glue(name_first, name_last,
                                       .sep = " "), ranking_date,
                   rank, points)
 
-
-
-    return(df)
+    return(df1)
 
 }
 
