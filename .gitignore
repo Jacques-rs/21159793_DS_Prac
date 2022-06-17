@@ -54,3 +54,5 @@ rsconnect/
 21159793/QUESTION1/COVID/data/Covid/Deaths_by_cause.csv
 21159793/QUESTION1/COVID/data/Covid/owid-covid-data.csv
 21159793/QUESTION2/London_Weather/data/london_weather.csv
+*.csv
+*.txt

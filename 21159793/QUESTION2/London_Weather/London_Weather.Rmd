@@ -30,7 +30,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
 pacman::p_load(modelsummary, knitr, tidyverse,
-               dlyr)
+               dlyr, ggplot)
 
 fmxdat::source_all("./code")
 ```
@@ -49,7 +49,44 @@ weather_df <- data_import()
 ```
 
 
+```{r}
+
+# view the data
+weather_df <- data_import()
+weather_df %<>% mutate(date = as.Date(lubridate::ymd(date))) %>% 
+    select(-c(global_radiation, pressure, snow_depth, precipitation)) %>% 
+    filter(date >= last(date) - lubridate::years(2)) %>% 
+    gather(key = "weather_char", "Value", c(max_temp, mean_temp, min_temp,
+                                            sunshine, cloud_cover))
+
+weather_df
 
 
 
+```
+
+
+
+```{r}
+
+weather_plot <- weather_df %>% ggplot() +
+    
+    geom_smooth(aes(x = date, y = Value, fill=weather_char, colour=weather_char),
+                 alpha=0.2) +
+    ggthemes::theme_economist() +
+    scale_y_continuous(name = "Temprature Range",
+                       sec.axis = sec_axis(trans = (~.*1.6),
+                                           name = "Precipitation")) +
+    facet_wrap(~weather_char, scales = "free_y", nrow = 2) + 
+    
+
+    
+
+
+
+weather_plot
+
+
+
+```
 
