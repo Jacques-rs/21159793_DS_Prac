@@ -1,0 +1,98 @@
+---
+title: "Title"
+author: "Jacques Rossouw"
+date: "November 2021"
+# date: "`r Sys.Date()`"
+bibliography: Tex/ref.bib       # Do not edit: Keep this naming convention and location.
+output:
+  pagedown::html_paged:
+    # template: wp_paged.html
+    # css: ['wp.css', 'wp-fonts.css', 'wp-page.css']
+    css: ["Template/default-fonts-Texevier.css", "Template/default-page-Texevier.css", "Template/default-Texevier.css"]
+    csl: Template/harvard-stellenbosch-university.csl # referencing format used.
+    template: ["Template/paged-Texevier.html"]
+
+    toc: true
+    # change to true for a self-contained document, but it'll be a litte slower for Pandoc to render
+    self_contained: TRUE
+# abstract: |
+#     This is an abstract. Much can be written here. Uncomment this line to go without an abstract.
+#     Abstracts have no spaces, but can have bullets.
+# 
+#     Bullets can be created as follows
+# 
+#     + You can add bullets, but do not add colons please.
+# 
+#     + Line breaks are also not permitted.
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
+
+pacman::p_load(modelsummary, gt, knitr, kableExtra, tidyverse, dyplr,
+               cowplot, lubridate)
+
+fmxdat::source_all("./code")
+```
+
+\newpage
+
+# Part A
+
+We need some insight into how African countries experienced Covid differently
+
+First we need to import the data:
+
+```{r}
+
+deaths_by_case <- df_fetch("Deaths_by_cause")
+
+
+covid_df <- df_fetch("owid-covid-data")
+
+```
+
+
+
+```{r}
+
+africa_df <- fetch_africa(covid_df)
+
+```
+
+
+# Part B
+
+```{r}
+
+fmxdat::source_all("./code")
+
+grouping_df <- grouping_fetch(covid_df)
+
+```
+
+
+```{r}
+
+
+
+Regrs <- list()
+
+# Regrs$temp_name <- 
+
+
+```
+
+
+
+
+
+# Part C
+
+
+```{r}
+
+```
+
+
