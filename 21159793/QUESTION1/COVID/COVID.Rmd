@@ -56,10 +56,15 @@ covid_df <- df_fetch("owid-covid-data")
 
 
 ```{r}
-
+fmxdat::source_all("./code")
 africa_df <- fetch_africa(covid_df)
 
 ```
+
+
+
+
+
 
 
 # Part B

@@ -54,10 +54,9 @@ weather_df <- data_import()
 # view the data
 weather_df <- data_import()
 weather_df %<>% mutate(date = as.Date(lubridate::ymd(date))) %>% 
-    select(-c(global_radiation, pressure, snow_depth, precipitation)) %>% 
-    filter(date >= last(date) - lubridate::years(2)) %>% 
-    gather(key = "weather_char", "Value", c(max_temp, mean_temp, min_temp,
-                                            sunshine, cloud_cover))
+    select(-c(global_radiation, pressure, snow_depth)) %>% 
+    filter(date >= last(date) - lubridate::years(2))
+    # gather(key = "weather_char", "Value", c(max_temp, mean_temp, min_temp))
 
 weather_df
 
@@ -67,17 +66,24 @@ weather_df
 
 
 
-```{r}
+```{r, fig.width=8, fig.height=8}
 
 weather_plot <- weather_df %>% ggplot() +
     
-    geom_smooth(aes(x = date, y = Value, fill=weather_char, colour=weather_char),
-                 alpha=0.2) +
-    ggthemes::theme_economist() +
-    scale_y_continuous(name = "Temprature Range",
-                       sec.axis = sec_axis(trans = (~.*1.6),
-                                           name = "Precipitation")) +
-    facet_wrap(~weather_char, scales = "free_y", nrow = 2) + 
+    # geom_area(aes(x = date, y = Value, fill=weather_char, colour=weather_char,
+    #               geom = "smooth"),
+    #              alpha=0.2) 
+    
+    geom_point(aes(x = date, y = mean_temp, colour=sunshine,
+                    size = precipitation),
+                 alpha=0.5, color="red", size=4) +
+    geom_point(aes(size = cloud_cover, x=date, y=sunshine), alpha=0.7,
+               size=4, color="steelblue") +
+    
+    ggthemes::theme_economist()
+    # scale_y_continuous(name = "Temprature Range",
+    #                    sec.axis = sec_axis(trans = (~.*1.6),
+    #                                        name = "Precipitation"))
     
 
     
@@ -86,6 +92,16 @@ weather_plot <- weather_df %>% ggplot() +
 
 weather_plot
 
+
+
+```
+
+
+
+
+
+```{r}
+library(ggradar)
 
 
 ```

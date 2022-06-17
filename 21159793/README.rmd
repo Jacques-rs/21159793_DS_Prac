@@ -22,3 +22,26 @@ list.files('code/', full.names = T, recursive = T) %>% .[grepl('.R', .)] %>% as.
 ```
 
 
+# Question 1:
+
+
+```{r}
+Texevier::create_template_html(directory = "./QUESTION1" , template_name = "COVID")
+```
+
+
+Question 2:
+
+```{r}
+Texevier::create_template_html(directory = "./QUESTION2" , template_name = "London_Weather")
+```
+
+Question 3:
+
+```{r}
+Texevier::create_template(directory = "./QUESTION3" , 
+                               template_name = "Tennis")
+```
+
+
+

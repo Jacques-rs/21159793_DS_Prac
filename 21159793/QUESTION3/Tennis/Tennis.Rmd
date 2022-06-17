@@ -123,44 +123,87 @@ fmxdat::source_all("./code")
 # A
 
 ```{r}
-
+fmxdat::source_all("./code")
 players <- player_info_fetch()
 
+# player_rankings <- fetch_rankings()
 
-player_rankings <- fetch_rankings() %>% 
-    mutate(ranking_date = as.Date(lubridate::ymd(ranking_date))) %>% 
+player_rankings_70 <- fetch_rankings(type1 = "rankings_70s", type2 = "rankings_80s") %>% player_consistency_wrangle(., players)
 
-    arrange(player, ranking_date) %>%     
-    group_by(player, ranking_date) %>% 
-    left_join(., players[, c("player_id", "name_first", "name_last")], 
-              by = c("player" = "player_id"), keep = F) %>% 
-    filter(max(rank) <=5) %>% 
-    summarise(player = glue::glue(name_first, name_last, 
-                                  .sep = " "), ranking_date,
-           rank, points) #%>% 
-    # group_by(player, ranking_date) %>% 
-    # mutate(top3 = if(rank %in% seq.int(1,3)){1}else{0}, 
-    #        top6 = if(rank %in% seq.int(4,6)){1}else{0},
-    #        top9 = if(rank %in% seq.int(7,9)){1}else{0}) %>% 
-    # gather(top_n, Value, 5:7)
+player_rankings_90 <- fetch_rankings(type1 = "rankings_90s", type2 = "rankings_00s") %>% player_consistency_wrangle(., players)
 
-
-
-#player_rankings %>% ungroup() %>% group_by(player)
+player_rankings_10 <- fetch_rankings(type1 = "rankings_10s", type2 = "rankings_current") %>% player_consistency_wrangle(., players)
 
 ```
 
 
-```{r, fig.width=6, fig.height=10}
-player_rankings_ %>% ggplot(aes(ranking_date, rank, color = player)) +
+```{r 1970 to 1990}
+
+player_rankings_70 %>% ggplot(aes(ranking_date, rank, color = player)) +
     geom_bump(size = 1, geom = "smooth") +
     geom_point(size = 2) +
     
     #ylim(1, 10) +
     
     labs(x = "Date", y = "Tournament Ranking",
-     title = "Player Ranking Consistency from 2020 to 2022",
-     subtitle = "Players whose best ranking is at least 5th",
+     title = "Player Ranking Consistency from 1970 to 1990",
+     subtitle = "Players whose best ranking is at least 5th and were in the top 10\nfor at least half the time period",
+     caption = "Data Obtained From: Jeff Sackmann") +
+    
+    scale_y_discrete(breaks = seq(1,10, by=1)) +
+    
+    theme(axis.text.x = element_text(angle = 90, size = 7.5,
+                                 colour = "grey30",
+                                 margin = margin(b = 20),
+                                 vjust = 0.5),
+      axis.title = element_text(face = "bold"),
+      axis.line = element_line(colour = "grey50", size = 1)) +
+
+    facet_wrap(~player, ncol=2, shrink = T)
+
+```
+
+
+
+```{r 1990 to 2010}
+
+player_rankings_90 %>% ggplot(aes(ranking_date, rank, color = player)) +
+    geom_bump(size = 1, geom = "smooth") +
+    geom_point(size = 2) +
+    
+    #ylim(1, 10) +
+    
+    labs(x = "Date", y = "Tournament Ranking",
+     title = "Player Ranking Consistency from 1990 to 2010",
+     subtitle = "Players whose best ranking is at least 5th and were in the top 10\nfor at least half the time period",
+     caption = "Data Obtained From: Jeff Sackmann") +
+    
+    scale_y_discrete(breaks = seq(1,10, by=1)) +
+    
+    theme(axis.text.x = element_text(angle = 90, size = 7.5,
+                                 colour = "grey30",
+                                 margin = margin(b = 20),
+                                 vjust = 0.5),
+      axis.title = element_text(face = "bold"),
+      axis.line = element_line(colour = "grey50", size = 1)) +
+
+    facet_wrap(~player, ncol=2, shrink = T)
+
+```
+
+
+
+
+```{r 2010 to 2022, fig.width=6, fig.height=10}
+player_rankings_10 %>% ggplot(aes(ranking_date, rank, color = player)) +
+    geom_bump(size = 1, geom = "smooth") +
+    geom_point(size = 2) +
+    
+    #ylim(1, 10) +
+    
+    labs(x = "Date", y = "Tournament Ranking",
+     title = "Player Ranking Consistency from 2010 to 2022",
+     subtitle = "Players whose best ranking is at least 5th and were in the top 10\nfor at least half the time period",
      caption = "Data Obtained From: Jeff Sackmann") +
     
     scale_y_discrete(breaks = seq(1,10, by=1)) +
@@ -188,24 +231,27 @@ player_rankings_ %>% ggplot(aes(ranking_date, rank, color = player)) +
 
 
 
-```{r}
-double_rankings <- read_csv(file = "data/Tennis/atp_rankings_20s.csv",
-                            show_col_types = F) %>% 
-    mutate(ranking_date = as.Date(lubridate::ymd(ranking_date))) %>% 
 
-    arrange(player, ranking_date) %>%     
-    group_by(player, ranking_date) %>% 
-    left_join(., players[, c("player_id", "name_first", "name_last")], 
-              by = c("player" = "player_id"), keep = F) %>% 
-    filter(max(rank) <=5) %>% 
-    summarise(player = glue::glue(name_first, name_last, 
-                                  .sep = " "), ranking_date,
-           rank, points) %>% 
-    group_by(player, ranking_date) %>% 
-    mutate(top3 = if(rank %in% seq.int(1,3)){1}else{0}, 
-           top6 = if(rank %in% seq.int(4,6)){1}else{0},
-           top9 = if(rank %in% seq.int(7,9)){1}else{0}) %>% 
-    gather(top_n, Value, 5:7)
+
+
+```{r}
+# double_rankings <- read_csv(file = "data/Tennis/atp_rankings_20s.csv",
+#                             show_col_types = F) %>% 
+#     mutate(ranking_date = as.Date(lubridate::ymd(ranking_date))) %>% 
+# 
+#     arrange(player, ranking_date) %>%     
+#     group_by(player, ranking_date) %>% 
+#     left_join(., players[, c("player_id", "name_first", "name_last")], 
+#               by = c("player" = "player_id"), keep = F) %>% 
+#     filter(max(rank) <=5) %>% 
+#     summarise(player = glue::glue(name_first, name_last, 
+#                                   .sep = " "), ranking_date,
+#            rank, points) %>% 
+#     group_by(player, ranking_date) %>% 
+#     mutate(top3 = if(rank %in% seq.int(1,3)){1}else{0}, 
+#            top6 = if(rank %in% seq.int(4,6)){1}else{0},
+#            top9 = if(rank %in% seq.int(7,9)){1}else{0}) %>% 
+#     gather(top_n, Value, 5:7)
 ```
 
 

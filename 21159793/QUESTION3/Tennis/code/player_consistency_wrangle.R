@@ -1,33 +1,42 @@
 
 
-player_consistency_wrangle <- function(df1, df2,
-                                       year1 = "19700101"){
+player_consistency_wrangle <- function(df1, df2){
 
-    year2 <- lubridate::ymd(year1) + years(20)
 
-    proportion_cal <- function(df){
 
-        total <- df %>% count(rank) %>% .$n %>% sum()
-        amount <- df %>% count(rank) %>% .[.[,"rank"]<=10,] %>% .$n %>% sum()
-        proportion <- amount/total
-        # proportion <- rep(amount/total, times=total)
-
-        return(proportion)
-
-    }
+    # proportion_cal <- function(df){
+    #
+    #     total <- df %>% count(rank) %>% .$n %>% sum()
+    #     amount <- df %>% count(rank) %>% .[.[,"rank"]<=10,] %>% .$n %>% sum()
+    #     proportion <- amount/total
+    #     # proportion <- rep(amount/total, times=total)
+    #
+    #     return(proportion)
+    #
+    # }
 
     df1 <- df1 %>%
         mutate(ranking_date = lubridate::ymd(ranking_date)) %>%
-        filter(ranking_date %within% interval(year1, year2)) %>%
+        # filter(ranking_date %within% interval(year1, year2)) %>%
         arrange(player, ranking_date) %>%
         group_by(player, ranking_date) %>%
         left_join(., df2[, c("player_id", "name_first", "name_last")],
                   by = c("player" = "player_id"), keep = F) %>%
-        filter(max(rank) <=5) %>%
-        filter(proportion_cal(.) >= 0.5) %>%
-        summarise(player = glue::glue(name_first, name_last,
-                                      .sep = " "), ranking_date,
-                  rank, points)
+        filter(min(rank) <=5) %>% ungroup()
+
+    max <- max(df1$ranking_date)
+    min <- min(df1$ranking_date)
+
+    span <- interval(min, max) %/% months(1)
+
+
+    df1 <- df1 %>% group_by(player) %>%
+
+        filter( interval(first(ranking_date), last(ranking_date))%/% months(1) > round(0.5*span)) %>%
+        ungroup() %>%
+        summarise(player = glue::glue("{name_first} {name_last}"), ranking_date,
+                  rank, points) %>%
+        group_by(player, ranking_date)
 
     return(df1)
 

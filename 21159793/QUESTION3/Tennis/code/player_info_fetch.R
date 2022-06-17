@@ -2,7 +2,8 @@
 
 player_info_fetch <- function(df){
 
-    df <- fetch_rankings(type = "players")
+    df <- read_csv(file = "./data/Tennis/atp_players.csv",
+                   show_col_types = F)
 
     return(df)
 
