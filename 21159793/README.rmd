@@ -44,4 +44,11 @@ Texevier::create_template(directory = "./QUESTION3" ,
 ```
 
 
+# Question 4
+
+
+```{r}
+Texevier::create_template(directory = "./QUESTION4" , 
+                               template_name = "Netflix")
+```
 
