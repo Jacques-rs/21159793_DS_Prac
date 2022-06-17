@@ -61,41 +61,28 @@ covid_df <- df_fetch("owid-covid-data")
 
 africa_df <- fetch_africa(covid_df)
 
+# Too much memroy used and slow
 rm(covid_df)
 
 africa_df <- useful_africa(africa_df)
 
-africa_df <- africa_df 
+africa_df <- good_bad(africa_df)
 
 ```
 
 
 ```{r}
-plot_df <- df %>% ggplot() +
-    geom_smooth(aes(x = date, y = good_value, color = good), 
-                show.legend = F) +
-    facet_wrap(~good, scales = "free_y") +
-    # ggthemes::canva_palettes +
-    labs(x = "Date", y = "Measure of Good Metrics",
-     title = "Plot of Good Metrics for Fight Against Covid-19 in Africa",
-     subtitle = "Does Money Buy Happines?",
-     caption = "Data Obtained From: OWID") +
-    # scale_fill_discrete(name = "Plot Values", 
-    #                     labels = c("Stringency Index",
-    #                                "Test Rate",
-    #                                "Vaccination Rate"))
-    theme(axis.text.x = element_text(size = 7.5,
-                                 colour = "grey30",
-                                 margin = margin(b = 20),
-                                 vjust = 0.5),
-      axis.title = element_text(face = "bold"),
-      axis.line = element_line(colour = "grey50", size = 1))
+plot_df <- plot_df1(africa_df)
 
-plot_df2 <- df %>% ggplot() +
-    geom_smooth(aes(x = date, y = bad_value, color = bad)) +
-    facet_wrap(~bad, scales = "free_y")
+plot_df
+```
 
-plot_df; plot_df2
+
+```{r}
+plot_df2 <- plot_df2(africa_df)
+
+
+plot_df2
 
 
 ```
